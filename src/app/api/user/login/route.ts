@@ -3,9 +3,11 @@ import { userInput, userValidationType } from "@/types/request-body";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { authenticateJWT } from "@/helper/authentication";
 
 export async function POST(request: NextRequest) {
   try {
+    authenticateJWT(request);
     const parsedInput = await userValidationType.safeParse(request.body);
     if (!parsedInput.success) {
       return Response.json({ message: "Invalid input", success: false });

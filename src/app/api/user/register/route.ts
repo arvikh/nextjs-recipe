@@ -2,6 +2,10 @@ import { userModel } from "@/models/user.model";
 import bcrypt from "bcrypt";
 import { userValidationType } from "@/types/request-body";
 import { NextRequest } from "next/server";
+import connectToDB from "@/dbconnect/dbconnect";
+
+connectToDB();
+
 export async function POST(request: NextRequest) {
   try {
     const parsedInput = await userValidationType.safeParse(request.body);
