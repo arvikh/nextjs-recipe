@@ -7,23 +7,27 @@ import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = await authenticateJWT(request);
+    const { id } = (await authenticateJWT(request)) as { id: string };
     const body = await request.json();
     const parsedRecipe = await recipeValidationType.safeParse(body);
     if (!parsedRecipe.success) {
       return Response.json({ error: parsedRecipe.error, success: false });
     }
-    console.log(userId);
+    const { title, instructions, ingredients, imageUrl } = parsedRecipe.data;
+    console.log(id);
     const newRecipe = await recipeModel.create({
-      title: parsedRecipe.data.title,
-      instructions: parsedRecipe.data.instructions,
-      ingredients: parsedRecipe.data.ingredients,
-      imageUrl: parsedRecipe.data.imageUrl,
-      userId: userId.userId,
+      title,
+      instructions,
+      ingredients,
+      imageUrl,
+      userId: id,
     });
-    newRecipe.save();
-  } catch (err) {
-    return Response.json({ error: err, success: false });
+    await newRecipe.save();
+    return Response.json({ newRecipe, success: true });
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message, success: false });
+    }
   }
 }
 // GET RECIPE BY ID

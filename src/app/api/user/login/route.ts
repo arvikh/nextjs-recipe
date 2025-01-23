@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       return Response.json({ message: "invalid username or password" });
     }
     const access_token = jwt.sign(
-      { userId: user._id },
+      { id: user._id },
       process.env.SECRET?.toString() || ""
     );
     const response = NextResponse.json({
