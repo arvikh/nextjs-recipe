@@ -1,11 +1,10 @@
 import { authenticateJWT } from "@/helper/common-auth";
 import { recipeModel } from "@/models/recipe.model";
 import { recipeValidationType } from "@/types/request-body";
-import { NextRequest } from "next/server";
 
 // CREATE RECIPE
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const { id } = (await authenticateJWT(request)) as { id: string };
     const body = await request.json();
@@ -30,6 +29,17 @@ export async function POST(request: NextRequest) {
     }
   }
 }
-// GET RECIPE BY ID
+
 // GET ALL RECIPES
-// DELETE RECIPE
+
+export async function GET(request: Request) {
+  try {
+    await authenticateJWT(request);
+    const result = await recipeModel.find({});
+    return Response.json({ data: result, success: true });
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message, success: false });
+    }
+  }
+}
