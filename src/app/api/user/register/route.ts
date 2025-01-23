@@ -28,7 +28,9 @@ export async function POST(request: NextRequest) {
       message: "user created successfully",
       success: true,
     });
-  } catch (err) {
-    return Response.json({ error: err, success: false });
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message, success: false });
+    }
   }
 }
