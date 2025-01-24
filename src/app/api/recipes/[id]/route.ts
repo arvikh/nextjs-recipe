@@ -22,9 +22,19 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await authenticateJWT(request);
-    const id = (await params).id;
-    await recipeModel.findByIdAndDelete(id);
+    const { id: userId } = (await authenticateJWT(request)) as { id: string };
+    const recipeId = (await params).id;
+    const deletedResult = await recipeModel.findOneAndDelete({
+      _id: recipeId,
+      userId,
+    });
+    console.log(deletedResult);
+    if (!deletedResult) {
+      return Response.json({
+        message: "recipe does not exist in your bucket",
+        success: false,
+      });
+    }
     const result = await recipeModel.find({});
     return Response.json({
       data: result,

@@ -3,13 +3,16 @@ import { userInput, userValidationType } from "@/types/request-body";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import connectToDB from "@/dbConnect/dbConnect";
+import connectToDB from "@/dbconnect/dbconnect";
+
 connectToDB();
 export async function POST(request: NextRequest) {
   try {
-    const parsedInput = await userValidationType.safeParse(request.body);
+    const body = await request.json();
+    const parsedInput = await userValidationType.safeParse(body);
     if (!parsedInput.success) {
-      return Response.json({ message: "Invalid input", success: false });
+      console.log(parsedInput.error);
+      return Response.json({ message: parsedInput.error, success: false });
     }
     const { email, password }: userInput = parsedInput.data;
     const user = await userModel.findOne({ email });

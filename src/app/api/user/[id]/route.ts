@@ -11,6 +11,7 @@ export async function GET(
     await authenticateJWT(request);
     const id = (await params).id;
     const user = await userModel.findOne({ _id: id });
+    console.log(user);
     if (user) {
       const recipes = await recipeModel.find({ userId: id });
       return Response.json({ data: recipes, success: true });
