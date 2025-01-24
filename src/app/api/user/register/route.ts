@@ -2,14 +2,14 @@ import { userModel } from "@/models/user.model";
 import bcrypt from "bcrypt";
 import { userValidationType } from "@/types/request-body";
 import { NextRequest } from "next/server";
-import connectToDB from "@/dbconnect/dbconnect";
-
+import connectToDB from "@/dbConnect/dbConnect";
 connectToDB();
-
 export async function POST(request: NextRequest) {
   try {
-    const parsedInput = await userValidationType.safeParse(request.body);
+    const body = await request.json();
+    const parsedInput = await userValidationType.safeParse(body);
     if (!parsedInput.success) {
+      console.log(parsedInput.error);
       return Response.json({ message: "invalid input" });
     }
     const isUserExists = await userModel.findOne({
@@ -28,7 +28,9 @@ export async function POST(request: NextRequest) {
       message: "user created successfully",
       success: true,
     });
-  } catch (err) {
-    return Response.json({ error: err, success: false });
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message, success: false });
+    }
   }
 }

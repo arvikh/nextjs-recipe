@@ -3,11 +3,10 @@ import { userInput, userValidationType } from "@/types/request-body";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { authenticateJWT } from "@/helper/authentication";
-
+import connectToDB from "@/dbConnect/dbConnect";
+connectToDB();
 export async function POST(request: NextRequest) {
   try {
-    authenticateJWT(request);
     const parsedInput = await userValidationType.safeParse(request.body);
     if (!parsedInput.success) {
       return Response.json({ message: "Invalid input", success: false });
@@ -21,14 +20,20 @@ export async function POST(request: NextRequest) {
     if (!isPasswordValid) {
       return Response.json({ message: "invalid username or password" });
     }
-    const access_token = jwt.sign(user._id, "SECRET");
+    const access_token = jwt.sign(
+      { id: user._id },
+      process.env.SECRET?.toString() || ""
+    );
     const response = NextResponse.json({
       message: "user logged in successfully",
       success: true,
+      token: access_token,
     });
     response.cookies.set("token", access_token, { httpOnly: true });
     return response;
   } catch (error) {
-    return Response.json({ error, success: false });
+    if (error instanceof Error) {
+      return Response.json({ error: error.message, success: false });
+    }
   }
 }
