@@ -4,12 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import connectToDB from "@/dbConnect/dbConnect";
-
 connectToDB();
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const parsedInput = await userValidationType.safeParse(body);
+    const parsedInput = await userValidationType.safeParse(request.body);
     if (!parsedInput.success) {
       return Response.json({ message: "Invalid input", success: false });
     }
