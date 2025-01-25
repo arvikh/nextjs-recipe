@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const parsedInput = await userValidationType.safeParse(body);
+    console.log(parsedInput.data);
     if (!parsedInput.success) {
-      console.log(parsedInput.error);
       return Response.json({ message: parsedInput.error, success: false });
     }
     const { email, password }: userInput = parsedInput.data;
