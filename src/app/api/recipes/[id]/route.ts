@@ -1,5 +1,7 @@
-import { authenticateJWT } from "@/helper/common-auth";
+import { authenticateJWT, getDataFromToken } from "@/helper/common-auth";
+import { getSource } from "@/helper/utils";
 import { recipeModel } from "@/models/recipe.model";
+import { NextRequest } from "next/server";
 
 export async function GET(
   request: Request,
@@ -18,11 +20,14 @@ export async function GET(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: userId } = (await authenticateJWT(request)) as { id: string };
+    const { id: userId } =
+      getSource(request) === "mobile"
+        ? ((await authenticateJWT(request)) as { id: string })
+        : ((await getDataFromToken(request)) as { id: string });
     const recipeId = (await params).id;
     const deletedResult = await recipeModel.findOneAndDelete({
       _id: recipeId,

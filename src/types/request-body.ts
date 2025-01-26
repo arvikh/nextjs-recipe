@@ -13,3 +13,11 @@ export const recipeValidationType = z.object({
   imageUrl: z.string(),
 });
 export type recipeInput = z.infer<typeof recipeValidationType>;
+
+export interface Recipie {
+  title: string;
+  ingredients: string;
+  instructions: string;
+  imageUrl: string;
+  _id?: string;
+}

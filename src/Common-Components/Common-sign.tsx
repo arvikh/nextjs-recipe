@@ -6,14 +6,12 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { useCookies } from "react-cookie";
 
 function Sign({ from }: { from: "signin" | "signup" }) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
   const { toast } = useToast();
-  const [_, setCookie] = useCookies(["access_token"]);
 
   const handleSubmit = useCallback(async () => {
     try {
@@ -26,9 +24,6 @@ function Sign({ from }: { from: "signin" | "signup" }) {
         }
       );
       if (response.data.success) {
-        if (response.data.token) {
-          setCookie("access_token", response.data.token);
-        }
         from == "signup" ? router.push("/signin") : router.push("/home");
       } else {
         toast({
@@ -41,7 +36,7 @@ function Sign({ from }: { from: "signin" | "signup" }) {
         title: "something went wrong",
       });
     }
-  }, [email, password, from, router, toast, setCookie]);
+  }, [email, password, from, router, toast]);
   return (
     <div className="flex flex-col justify-center h-80 gap-2">
       <h1>{from == "signup" ? "Sign Up" : "Sign In"}</h1>
