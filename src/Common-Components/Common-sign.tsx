@@ -2,22 +2,21 @@
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { useCookies } from "react-cookie";
+import { UserContext } from "@/context/UserContext";
 
 function Sign({ from }: { from: "signin" | "signup" }) {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
   const { toast } = useToast();
-  const [_, setCookie] = useCookies(["access_token"]);
+  const { setUserId } = useContext(UserContext);
 
   const handleSubmit = useCallback(async () => {
     try {
-      console.log(email, password);
       const response = await axios.post(
         from == "signup" ? "/api/user/register" : "/api/user/login",
         {
@@ -26,9 +25,7 @@ function Sign({ from }: { from: "signin" | "signup" }) {
         }
       );
       if (response.data.success) {
-        if (response.data.token) {
-          setCookie("access_token", response.data.token);
-        }
+        response.data.id && setUserId(response.data.id);
         from == "signup" ? router.push("/signin") : router.push("/home");
       } else {
         toast({
@@ -41,7 +38,7 @@ function Sign({ from }: { from: "signin" | "signup" }) {
         title: "something went wrong",
       });
     }
-  }, [email, password, from, router, toast, setCookie]);
+  }, [from, email, password, setUserId, router, toast]);
   return (
     <div className="flex flex-col justify-center h-80 gap-2">
       <h1>{from == "signup" ? "Sign Up" : "Sign In"}</h1>
