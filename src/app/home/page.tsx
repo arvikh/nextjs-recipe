@@ -40,10 +40,11 @@ function HomePage() {
   return (
     <div>
       <div>Home Page Logged IN</div>
-
-      {recipes.map((eachItem: Recipie, index) => {
-        return <RecipieCard key={eachItem._id} recipe={eachItem} />;
-      })}
+      <div className="flex flex-wrap">
+        {recipes.map((eachItem: Recipie, index) => {
+          return <RecipieCard key={eachItem._id} recipe={eachItem} />;
+        })}
+      </div>
     </div>
   );
 }
