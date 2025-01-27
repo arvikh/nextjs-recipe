@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
-import { Recipie } from "@/types/request-body";
+import { Dispatch, SetStateAction, useCallback, useState, useRef } from "react";
+import { Recipe } from "@/types/request-body";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -9,12 +9,13 @@ const AddRecipe = ({
 }: {
   setGetter: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [recipe, setRecipe] = useState<Recipie>({
+  const [recipe, setRecipe] = useState<Recipe>({
     title: "",
     ingredients: "",
     instructions: "",
     imageUrl: "",
   });
+  const inputRef = useRef(null);
 
   const handleAdd = useCallback(async () => {
     try {
@@ -26,6 +27,10 @@ const AddRecipe = ({
         toast({
           title: response.data.message,
         });
+
+        setRecipe({ ...recipe, title: "" });
+        setRecipe({ ...recipe, ingredients: "" });
+        setRecipe({ ...recipe, instructions: "" });
         setGetter((prev) => !prev);
       }
     } catch (error) {
@@ -39,22 +44,43 @@ const AddRecipe = ({
   }, [recipe, setGetter]);
 
   return (
-    <div>
+    <div style={{ color: "white" }}>
       <Input
         onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
         placeholder="Recipe Title"
+        style={{
+          backgroundColor: "#443C68",
+          marginBottom: "4px",
+          border: "none",
+        }}
+        ref={inputRef}
       />
       <Input
         onChange={(e) => setRecipe({ ...recipe, ingredients: e.target.value })}
         placeholder="Recipe ingredients"
+        style={{
+          backgroundColor: "#443C68",
+          marginBottom: "4px",
+          border: "none",
+        }}
       />
       <Input
         onChange={(e) => setRecipe({ ...recipe, instructions: e.target.value })}
         placeholder="Recipe instructions"
+        style={{
+          backgroundColor: "#443C68",
+          marginBottom: "4px",
+          border: "none",
+        }}
       />
       <Input
         onChange={(e) => setRecipe({ ...recipe, imageUrl: e.target.value })}
         placeholder="Recipe Image"
+        style={{
+          backgroundColor: "#443C68",
+          marginBottom: "4px",
+          border: "none",
+        }}
       />
       <Button onClick={handleAdd}>Add</Button>
     </div>

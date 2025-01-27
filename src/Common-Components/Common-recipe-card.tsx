@@ -1,20 +1,28 @@
 import { Button } from "@/components/ui/button";
-import { UserContext } from "@/context/UserContext";
+import { useCookies } from "react-cookie";
 import { toast } from "@/hooks/use-toast";
-import { Recipie } from "@/types/request-body";
+
 import axios from "axios";
 
 import Image from "next/image";
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
+import { Recipe } from "@/types/request-body";
 
-const RecipieCard = ({ recipe }: { recipe: Recipie }) => {
+function RecipeCard({
+  recipe,
+  setGetter,
+}: {
+  recipe: Recipe;
+  setGetter: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const { title, imageUrl, ingredients, instructions, userId, _id } = recipe;
-  const { id } = useContext(UserContext);
+  const [cookie, _] = useCookies(["user_id"]);
 
   const handleDelete = useCallback(async () => {
     try {
       const response = await axios.delete(`/api/recipes/${_id}`);
       if (response.data.success) {
+        setGetter((prev) => !prev);
         toast({
           title: response.data?.message,
         });
@@ -27,35 +35,48 @@ const RecipieCard = ({ recipe }: { recipe: Recipie }) => {
         });
       }
     }
-  }, []);
+  }, [_id, setGetter]);
 
   return (
     <div
-      className="flex flex-col place-items-center "
+      className="flex flex-col justify-between gap-3"
       style={{
-        width: "300px",
-        backgroundColor: "#FFBF9B",
+        maxWidth: "300px",
+        minWidth: "auto",
+        backgroundColor: "#CAE0BC",
         borderRadius: "12px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         margin: "4px",
         padding: "8px",
+        color: "#393053",
       }}
     >
-      <p>{title}</p>
-      <Image src={imageUrl} alt="" width={150} height={200} />
-      <p className="text-sm">
+      <Image
+        src={imageUrl}
+        alt=""
+        width={150}
+        height={200}
+        className="rounded-lg"
+      />
+      <p>
+        <strong>{title}</strong>
+      </p>
+      <p className="text-sm pb-3">
         <strong>Ingredients:</strong> {ingredients}
       </p>
-      <p className="text-sm font-mono">
+      <p className="text-sm pb-3">
         <strong>Instructions:</strong> {instructions}
       </p>
       <Button
         onClick={handleDelete}
-        style={{ display: userId === id ? "block" : "none" }}
+        style={{ display: userId === cookie.user_id ? "block" : "none" }}
       >
         Delete
       </Button>
     </div>
   );
-};
+}
 
-export default RecipieCard;
+export default RecipeCard;

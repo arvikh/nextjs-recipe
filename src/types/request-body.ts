@@ -14,7 +14,7 @@ export const recipeValidationType = z.object({
 });
 export type recipeInput = z.infer<typeof recipeValidationType>;
 
-export interface Recipie {
+export interface Recipe {
   title: string;
   ingredients: string;
   instructions: string;

@@ -28,7 +28,11 @@ export async function POST(request: NextRequest) {
       userId: userId,
     });
     await newRecipe.save();
-    return Response.json({ newRecipe, success: true });
+    return Response.json({
+      newRecipe,
+      message: "Recipe added successfully",
+      success: true,
+    });
   } catch (error) {
     if (error instanceof Error) {
       return Response.json({ error: error.message, success: false });

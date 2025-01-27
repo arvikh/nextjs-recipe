@@ -1,9 +1,9 @@
 "use client";
 import AddRecipe from "@/Common-Components/Add-Recipe";
-import RecipieCard from "@/Common-Components/Common-recipe-card";
+import RecipeCard from "@/Common-Components/Common-recipe-card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Recipie } from "@/types/request-body";
+import { Recipe } from "@/types/request-body";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -55,13 +55,19 @@ function HomePage() {
   }, [getter]);
 
   return (
-    <div className="flex flex-row pt-4">
+    <div className="flex flex-row p-4" style={{ backgroundColor: "#635985" }}>
       <div className="w-1/8">
         <Button onClick={handleLogout}>Logout</Button>
       </div>
-      <div className="flex w-1/2 grow pr-4 pl-4 flex-wrap">
-        {recipes.map((eachItem: Recipie) => {
-          return <RecipieCard key={eachItem?._id} recipe={eachItem} />;
+      <div className="flex w-12/2 grow pr-4 pl-4 flex-wrap">
+        {recipes.map((eachItem: Recipe) => {
+          return (
+            <RecipeCard
+              key={eachItem?._id}
+              recipe={eachItem}
+              setGetter={setGetter}
+            />
+          );
         })}
       </div>
       <div className="w-1/4">
