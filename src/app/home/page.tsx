@@ -55,9 +55,11 @@ function HomePage() {
   }, [getter]);
 
   return (
-    <div className="flex flex-row p-4" style={{ backgroundColor: "#635985" }}>
+    <div className="flex flex-row p-4">
       <div className="w-1/8">
-        <Button onClick={handleLogout}>Logout</Button>
+        <Button onClick={handleLogout} style={{ backgroundColor: "#635985" }}>
+          Logout
+        </Button>
       </div>
       <div className="flex w-12/2 grow pr-4 pl-4 flex-wrap">
         {recipes.map((eachItem: Recipe) => {

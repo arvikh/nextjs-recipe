@@ -49,7 +49,7 @@ const AddRecipe = ({
         onChange={(e) => setRecipe({ ...recipe, title: e.target.value })}
         placeholder="Recipe Title"
         style={{
-          backgroundColor: "#443C68",
+          backgroundColor: "#CAE0BC",
           marginBottom: "4px",
           border: "none",
         }}
@@ -59,7 +59,7 @@ const AddRecipe = ({
         onChange={(e) => setRecipe({ ...recipe, ingredients: e.target.value })}
         placeholder="Recipe ingredients"
         style={{
-          backgroundColor: "#443C68",
+          backgroundColor: "#CAE0BC",
           marginBottom: "4px",
           border: "none",
         }}
@@ -68,7 +68,7 @@ const AddRecipe = ({
         onChange={(e) => setRecipe({ ...recipe, instructions: e.target.value })}
         placeholder="Recipe instructions"
         style={{
-          backgroundColor: "#443C68",
+          backgroundColor: "#CAE0BC",
           marginBottom: "4px",
           border: "none",
         }}
@@ -77,12 +77,14 @@ const AddRecipe = ({
         onChange={(e) => setRecipe({ ...recipe, imageUrl: e.target.value })}
         placeholder="Recipe Image"
         style={{
-          backgroundColor: "#443C68",
+          backgroundColor: "#CAE0BC",
           marginBottom: "4px",
           border: "none",
         }}
       />
-      <Button onClick={handleAdd}>Add</Button>
+      <Button onClick={handleAdd} style={{ backgroundColor: "#635985" }}>
+        Add
+      </Button>
     </div>
   );
 };

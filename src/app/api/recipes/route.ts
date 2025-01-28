@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
       instructions,
       ingredients,
       imageUrl,
+
       userId: userId,
     });
     await newRecipe.save();

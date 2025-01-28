@@ -50,7 +50,7 @@ function RecipeCard({
         alignItems: "center",
         margin: "4px",
         padding: "8px",
-        color: "#393053",
+        color: "#191919",
       }}
     >
       <Image
@@ -71,7 +71,10 @@ function RecipeCard({
       </p>
       <Button
         onClick={handleDelete}
-        style={{ display: userId === cookie.user_id ? "block" : "none" }}
+        style={{
+          display: userId === cookie.user_id ? "block" : "none",
+          backgroundColor: "#635985",
+        }}
       >
         Delete
       </Button>
