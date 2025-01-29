@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCallback, useState } from "react";
 import Link from "next/link";
+import { useCookies } from "react-cookie";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,10 +13,10 @@ function Sign({ from }: { from: "signin" | "signup" }) {
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
   const { toast } = useToast();
+  const [_, setCookie] = useCookies(["user_id"]);
 
   const handleSubmit = useCallback(async () => {
     try {
-      console.log(email, password);
       const response = await axios.post(
         from == "signup" ? "/api/user/register" : "/api/user/login",
         {
@@ -24,6 +25,7 @@ function Sign({ from }: { from: "signin" | "signup" }) {
         }
       );
       if (response.data.success) {
+        response.data.id && setCookie("user_id", response.data.id);
         from == "signup" ? router.push("/signin") : router.push("/home");
       } else {
         toast({
@@ -36,7 +38,7 @@ function Sign({ from }: { from: "signin" | "signup" }) {
         title: "something went wrong",
       });
     }
-  }, [email, password, from, router, toast]);
+  }, [from, email, password, setCookie, router, toast]);
   return (
     <div className="flex flex-col justify-center h-80 gap-2">
       <h1>{from == "signup" ? "Sign Up" : "Sign In"}</h1>
@@ -44,14 +46,21 @@ function Sign({ from }: { from: "signin" | "signup" }) {
         onChange={(e) => setEmail(e.target.value)}
         className="w-80 m-2"
         placeholder="Email"
+        style={{ border: "2px solid #635985" }}
       />
       <Input
         onChange={(e) => setPassword(e.target.value)}
         className="w-80 m-2"
         type="password"
         placeholder="Password"
+        style={{ border: "2px solid #635985" }}
       />
-      <Button onClick={handleSubmit} variant={"outline"} className="w-80 m-2">
+      <Button
+        onClick={handleSubmit}
+        variant={"outline"}
+        className="w-80 m-2"
+        style={{ backgroundColor: "#635985", color: "white" }}
+      >
         {from == "signup" ? "SignUp" : "SignIn"}
       </Button>
       {from == "signup" && (
