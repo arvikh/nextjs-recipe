@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useCookies } from "react-cookie";
 import { toast } from "@/hooks/use-toast";
 
@@ -7,13 +6,18 @@ import axios from "axios";
 import Image from "next/image";
 import { useCallback } from "react";
 import { Recipe } from "@/types/request-body";
+import { HeartIcon, Trash2Icon } from "lucide-react";
 
 function RecipeCard({
   recipe,
   setGetter,
+  isFav,
+  setFav,
 }: {
   recipe: Recipe;
   setGetter: React.Dispatch<React.SetStateAction<boolean>>;
+  isFav: false | (true | undefined)[];
+  setFav: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { title, imageUrl, ingredients, instructions, userId, _id } = recipe;
   const [cookie, _] = useCookies(["user_id"]);
@@ -37,6 +41,28 @@ function RecipeCard({
     }
   }, [_id, setGetter]);
 
+  const handleFavorites = useCallback(async () => {
+    try {
+      const response = await axios.post(`/api/recipes/favorites`, {
+        recipeId: _id,
+      });
+      if (response.data.success) {
+        setFav((prev) => !prev);
+        setGetter((prev) => !prev);
+        toast({
+          title: response.data?.message,
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: error.message,
+          variant: "destructive",
+        });
+      }
+    }
+  }, [_id, setGetter, setFav]);
+  console.log(title, isFav);
   return (
     <div
       className="flex flex-col justify-between gap-3"
@@ -69,15 +95,26 @@ function RecipeCard({
       <p className="text-sm pb-3">
         <strong>Instructions:</strong> {instructions}
       </p>
-      <Button
-        onClick={handleDelete}
-        style={{
-          display: userId === cookie.user_id ? "block" : "none",
-          backgroundColor: "#635985",
-        }}
-      >
-        Delete
-      </Button>
+      <div className="flex justify-between" style={{ width: "95%" }}>
+        <HeartIcon
+          style={{
+            color: "red",
+            margin: "auto",
+            cursor: "pointer",
+            fill: isFav[0] ? "red" : "",
+          }}
+          onClick={handleFavorites}
+        ></HeartIcon>
+
+        <Trash2Icon
+          onClick={handleDelete}
+          style={{
+            display: userId === cookie.user_id ? "block" : "none",
+            cursor: "pointer",
+            margin: "auto",
+          }}
+        ></Trash2Icon>
+      </div>
     </div>
   );
 }
