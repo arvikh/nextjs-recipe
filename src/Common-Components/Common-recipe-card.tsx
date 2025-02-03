@@ -4,23 +4,39 @@ import { toast } from "@/hooks/use-toast";
 import axios from "axios";
 
 import Image from "next/image";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Recipe } from "@/types/request-body";
 import { HeartIcon, Trash2Icon } from "lucide-react";
 
 function RecipeCard({
   recipe,
   setGetter,
-  isFav,
-  setFav,
 }: {
   recipe: Recipe;
   setGetter: React.Dispatch<React.SetStateAction<boolean>>;
-  isFav: false | (true | undefined)[];
-  setFav: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const { title, imageUrl, ingredients, instructions, userId, _id } = recipe;
   const [cookie, _] = useCookies(["user_id"]);
+  const [isFav, setFavorite] = useState(false);
+
+  useEffect(() => {
+    const getFavStatus = async () => {
+      try {
+        const response = await axios.get(`/api/recipes/favorites/${_id}`);
+        if (response.data.success) {
+          setFavorite(!isFav);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          toast({
+            title: error.message,
+            variant: "destructive",
+          });
+        }
+      }
+    };
+    getFavStatus();
+  }, []);
 
   const handleDelete = useCallback(async () => {
     try {
@@ -47,7 +63,7 @@ function RecipeCard({
         recipeId: _id,
       });
       if (response.data.success) {
-        setFav((prev) => !prev);
+        setFavorite(!isFav);
         setGetter((prev) => !prev);
         toast({
           title: response.data?.message,
@@ -61,14 +77,13 @@ function RecipeCard({
         });
       }
     }
-  }, [_id, setGetter, setFav]);
-  console.log(title, isFav);
+  }, [_id, isFav, setGetter]);
+
   return (
     <div
       className="flex flex-col justify-between gap-3"
       style={{
-        maxWidth: "300px",
-        minWidth: "auto",
+        width: "300px",
         backgroundColor: "#CAE0BC",
         borderRadius: "12px",
         display: "flex",
@@ -101,7 +116,7 @@ function RecipeCard({
             color: "red",
             margin: "auto",
             cursor: "pointer",
-            fill: isFav[0] ? "red" : "",
+            fill: isFav ? "red" : "",
           }}
           onClick={handleFavorites}
         ></HeartIcon>

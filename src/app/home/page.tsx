@@ -14,7 +14,7 @@ function HomePage() {
   const [recipes, setRecipes] = useState([]);
   const [favorite, setFavorite] = useState([]);
   const [getter, setGetter] = useState(false);
-  const [isFav, setFav] = useState(false);
+
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
@@ -85,19 +85,11 @@ function HomePage() {
       </div>
       <div className="flex w-12/2 grow pr-4 pl-4 flex-wrap">
         {recipes.map((eachItem: Recipe) => {
-          const isFav =
-            favorite.length > 0 &&
-            favorite.map((item: Recipe) => {
-              if (item._id === eachItem._id) return true;
-            });
-
           return (
             <RecipeCard
               key={eachItem?._id}
               recipe={eachItem}
               setGetter={setGetter}
-              isFav={isFav}
-              setFav={setFav}
             />
           );
         })}

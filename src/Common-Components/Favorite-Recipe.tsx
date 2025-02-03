@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function Favorites({ recipe }: { recipe: Recipe }) {
   const { imageUrl } = recipe;
-  console.log(imageUrl);
+  
   return (
     <div>
       <Image
